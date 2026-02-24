@@ -6,19 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            RecordListView()
+                .tabItem {
+                    Label("记录", systemImage: "list.bullet.rectangle")
+                }
+
+            SettingsView()
+                .tabItem {
+                    Label("设置", systemImage: "gearshape")
+                }
         }
-        .padding()
+        .tint(.coffee)
     }
 }
 
 #Preview {
     ContentView()
+        .modelContainer(for: BrewRecord.self, inMemory: true)
 }

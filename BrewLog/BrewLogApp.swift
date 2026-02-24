@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct BrewLogApp: App {
@@ -13,5 +14,6 @@ struct BrewLogApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: BrewRecord.self)
     }
 }
