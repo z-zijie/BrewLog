@@ -10,7 +10,6 @@ struct CoffeeBeanSection: View {
     @Binding var coffeeBean: String
     @Binding var roastLevel: RoastLevel
     @Binding var roastDate: Date?
-    @Binding var grindSize: String
 
     var body: some View {
         Section {
@@ -31,9 +30,6 @@ struct CoffeeBeanSection: View {
                 ),
                 displayedComponents: .date
             )
-
-            TextField("研磨度", text: $grindSize)
-                .accessibilityLabel("研磨度")
         } header: {
             Label("咖啡豆信息", systemImage: "leaf")
         }
@@ -77,8 +73,7 @@ struct NotesSection: View {
         CoffeeBeanSection(
             coffeeBean: .constant("埃塞俄比亚 耶加雪菲"),
             roastLevel: .constant(.medium),
-            roastDate: .constant(Date()),
-            grindSize: .constant("中细")
+            roastDate: .constant(Date())
         )
         RatingSection(rating: .constant(4))
         NotesSection(notes: .constant("风味明亮，果酸适中"))

@@ -37,14 +37,14 @@ enum RoastLevel: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// 颜色表示
+    /// 颜色表示（使用 Asset Catalog，自动适配深浅模式）
     var color: Color {
         switch self {
-        case .light: return Color(red: 0.76, green: 0.60, blue: 0.42)
-        case .mediumLight: return Color(red: 0.65, green: 0.49, blue: 0.35)
-        case .medium: return Color(red: 0.55, green: 0.40, blue: 0.28)
-        case .mediumDark: return Color(red: 0.45, green: 0.32, blue: 0.22)
-        case .dark: return Color(red: 0.30, green: 0.20, blue: 0.15)
+        case .light: return .roastLight
+        case .mediumLight: return .roastMediumLight
+        case .medium: return .roastMedium
+        case .mediumDark: return .roastMediumDark
+        case .dark: return .roastDark
         }
     }
 }

@@ -20,7 +20,7 @@ final class BrewRecord {
     var coffeeBean: String // 咖啡豆名称
     var roastLevel: RoastLevel
     var roastDate: Date?
-    var grindSize: String // 研磨度
+    var grindSize: Double? // 研磨度 (0-12)
 
     // MARK: - Espresso 参数
     var espressoDose: Double? // 粉量 (g)
@@ -43,6 +43,12 @@ final class BrewRecord {
     var mokaHeat: HeatLevel? // 火力
     var mokaTime: Int? // 时间 (秒)
 
+    // MARK: - 后处理参数
+    var drinkType: DrinkType? // 饮品类型
+    var milkType: MilkType? // 牛奶类型
+    var milkAmount: Int? // 牛奶量 (ml)
+    var isIced: Bool = false // 是否冰饮
+
     // MARK: - AI 分析结果
     var analysisJSON: String?
     var analyzedAt: Date?
@@ -56,7 +62,7 @@ final class BrewRecord {
         coffeeBean: String = "",
         roastLevel: RoastLevel = .medium,
         roastDate: Date? = nil,
-        grindSize: String = ""
+        grindSize: Double? = nil
     ) {
         self.id = UUID()
         self.method = method

@@ -7,6 +7,7 @@ import SwiftUI
 
 /// 摩卡壶参数表单区块
 struct MokaPotFormSection: View {
+    @Binding var grindSize: Double?
     @Binding var dose: Double?
     @Binding var water: Double?
     @Binding var heat: HeatLevel?
@@ -14,8 +15,9 @@ struct MokaPotFormSection: View {
 
     var body: some View {
         Section {
-            ParameterField(title: "粉量", unit: "g", value: $dose, range: 10...30, step: 0.5)
-            ParameterField(title: "水量", unit: "ml", value: $water, range: 50...300, step: 10)
+            ParameterField(title: "研磨度", unit: "", value: $grindSize, range: 0...12, step: 0.1, defaultValue: 4)
+            ParameterField(title: "粉量", unit: "g", value: $dose, range: 10...30, step: 0.5, defaultValue: 20)
+            ParameterField(title: "水量", unit: "ml", value: $water, range: 50...300, step: 10, defaultValue: 120)
 
             Picker("火力", selection: $heat) {
                 Text("请选择").tag(nil as HeatLevel?)
@@ -28,7 +30,7 @@ struct MokaPotFormSection: View {
                 }
             }
 
-            IntParameterField(title: "萃取时间", unit: "秒", value: $time, range: 60...300)
+            IntParameterField(title: "萃取时间", unit: "秒", value: $time, range: 60...300, defaultValue: 120)
         } header: {
             Label("摩卡壶参数", systemImage: "flame")
         } footer: {
@@ -40,6 +42,7 @@ struct MokaPotFormSection: View {
 #Preview {
     Form {
         MokaPotFormSection(
+            grindSize: .constant(4),
             dose: .constant(20),
             water: .constant(120),
             heat: .constant(.medium),

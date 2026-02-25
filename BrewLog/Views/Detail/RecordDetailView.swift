@@ -62,9 +62,16 @@ struct RecordDetailView: View {
                     }
                 }
 
-                LabeledContent("研磨度", value: record.grindSize.isEmpty ? "未记录" : record.grindSize)
+                if let grindSize = record.grindSize {
+                    ParameterDisplay(title: "研磨度", value: String(format: "%.1f", grindSize), unit: "")
+                }
             } header: {
                 Text("咖啡豆信息")
+            }
+
+            // 后处理信息
+            if record.drinkType != nil || record.isIced {
+                postProcessingSection
             }
 
             // 笔记
@@ -197,6 +204,35 @@ struct RecordDetailView: View {
         if record.mokaDose == nil && record.mokaWater == nil {
             Text("未记录参数")
                 .foregroundStyle(.tertiary)
+        }
+    }
+
+    // MARK: - 后处理区块
+    @ViewBuilder
+    private var postProcessingSection: some View {
+        Section {
+            if let drinkType = record.drinkType {
+                LabeledContent("饮品类型", value: drinkType.rawValue)
+            }
+
+            if let milkType = record.milkType {
+                LabeledContent("牛奶类型", value: milkType.rawValue)
+            }
+
+            if let milkAmount = record.milkAmount {
+                ParameterDisplay(title: "牛奶量", value: "\(milkAmount)", unit: "ml")
+            }
+
+            if record.isIced {
+                HStack {
+                    Text("冰饮")
+                    Spacer()
+                    Image(systemName: "ice")
+                        .foregroundStyle(.blue)
+                }
+            }
+        } header: {
+            Text("后处理")
         }
     }
 

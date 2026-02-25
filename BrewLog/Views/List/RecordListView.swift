@@ -12,7 +12,7 @@ struct RecordListView: View {
     @Query(sort: \BrewRecord.date, order: .reverse) private var records: [BrewRecord]
 
     @State private var showingNewRecord = false
-    @State private var deletedRecord: BrewRecord?
+    @State private var deletedRecordCopy: BrewRecord?
     @State private var showUndoToast = false
 
     var body: some View {
@@ -97,6 +97,7 @@ struct RecordListView: View {
         .navigationDestination(for: BrewRecord.self) { record in
             RecordDetailView(record: record)
         }
+        .animation(.default, value: records)
     }
 
     // MARK: - 撤销提示
@@ -144,25 +145,71 @@ struct RecordListView: View {
 
     private func deleteRecords(at offsets: IndexSet, in sectionRecords: [BrewRecord]) {
         for index in offsets {
-            deletedRecord = sectionRecords[index]
-            modelContext.delete(sectionRecords[index])
+            let record = sectionRecords[index]
+            // 保存删除记录的副本用于撤销
+            deletedRecordCopy = copyRecord(record)
+            modelContext.delete(record)
         }
         showUndoToast = true
 
-        // 3秒后自动隐藏
+        // 3秒后自动隐藏并清除副本
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             if showUndoToast {
                 showUndoToast = false
-                deletedRecord = nil
+                deletedRecordCopy = nil
             }
         }
     }
 
+    /// 复制记录数据（用于撤销删除）
+    private func copyRecord(_ record: BrewRecord) -> BrewRecord {
+        let copy = BrewRecord(
+            method: record.method,
+            date: record.date,
+            rating: record.rating,
+            notes: record.notes,
+            coffeeBean: record.coffeeBean,
+            roastLevel: record.roastLevel,
+            roastDate: record.roastDate,
+            grindSize: record.grindSize
+        )
+
+        // 复制方式特定参数
+        switch record.method {
+        case .espresso:
+            copy.espressoDose = record.espressoDose
+            copy.espressoYield = record.espressoYield
+            copy.espressoTime = record.espressoTime
+            copy.espressoTemp = record.espressoTemp
+            copy.espressoPressure = record.espressoPressure
+        case .pourOver:
+            copy.pourOverDose = record.pourOverDose
+            copy.pourOverWater = record.pourOverWater
+            copy.pourOverTemp = record.pourOverTemp
+            copy.pourOverBloomTime = record.pourOverBloomTime
+            copy.pourOverTime = record.pourOverTime
+            copy.pourOverPours = record.pourOverPours
+        case .mokaPot:
+            copy.mokaDose = record.mokaDose
+            copy.mokaWater = record.mokaWater
+            copy.mokaHeat = record.mokaHeat
+            copy.mokaTime = record.mokaTime
+        }
+
+        // 复制分析数据
+        copy.analysisJSON = record.analysisJSON
+        copy.analyzedAt = record.analyzedAt
+
+        return copy
+    }
+
     private func undoDelete() {
-        // 撤销删除（这里只是隐藏toast，实际数据已删除）
-        // 完整实现需要保存删除的记录数据
+        // 恢复被删除的记录
+        if let copy = deletedRecordCopy {
+            modelContext.insert(copy)
+        }
         showUndoToast = false
-        deletedRecord = nil
+        deletedRecordCopy = nil
     }
 }
 

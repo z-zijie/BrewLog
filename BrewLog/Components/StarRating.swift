@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 /// 星级评分组件（1-5星）
 struct StarRating: View {
@@ -14,6 +15,9 @@ struct StarRating: View {
 
     @Environment(\.accessibilityReduceMotion) var reduceMotion
 
+    /// 触感反馈生成器
+    private let selectionFeedback = UISelectionFeedbackGenerator()
+
     var body: some View {
         HStack(spacing: 4) {
             ForEach(1...maxRating, id: \.self) { star in
@@ -22,12 +26,33 @@ struct StarRating: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         guard editable else { return }
+                        // 触感反馈
+                        selectionFeedback.selectionChanged()
                         withAnimation(reduceMotion ? .none : .spring(response: 0.3)) {
                             rating = star
                         }
                     }
-                    .accessibilityLabel("评分：\(star) 星")
-                    .accessibilityHint(editable ? "双击设置评分" : "当前评分：\(rating) 星")
+            }
+        }
+        // 无障碍支持
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("评分：\(rating) 星")
+        .accessibilityHint(editable ? "上下滑动调整评分" : "当前评分")
+        .accessibilityAdjustableAction { direction in
+            guard editable else { return }
+            switch direction {
+            case .increment:
+                if rating < maxRating {
+                    selectionFeedback.selectionChanged()
+                    rating += 1
+                }
+            case .decrement:
+                if rating > 1 {
+                    selectionFeedback.selectionChanged()
+                    rating -= 1
+                }
+            @unknown default:
+                break
             }
         }
     }
@@ -36,7 +61,7 @@ struct StarRating: View {
     private func starView(for star: Int) -> some View {
         Image(systemName: star <= rating ? "star.fill" : "star")
             .font(.system(size: size))
-            .foregroundStyle(star <= rating ? .yellow : .gray.opacity(0.3))
+            .foregroundStyle(star <= rating ? Color.starFill : Color.gray.opacity(0.3))
             .symbolEffect(.bounce, value: rating)
     }
 }
@@ -52,7 +77,7 @@ struct StarRatingDisplay: View {
             ForEach(1...maxRating, id: \.self) { star in
                 Image(systemName: star <= rating ? "star.fill" : "star")
                     .font(.system(size: size))
-                    .foregroundStyle(star <= rating ? .yellow : .gray.opacity(0.3))
+                    .foregroundStyle(star <= rating ? Color.starFill : Color.gray.opacity(0.3))
             }
         }
         .accessibilityLabel("评分：\(rating) 星")
