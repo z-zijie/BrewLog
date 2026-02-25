@@ -57,95 +57,93 @@ struct NewRecordView: View {
     @State private var date = Date()
 
     var body: some View {
-        NavigationStack {
-            Form {
-                // 第一步：咖啡豆信息
-                CoffeeBeanSection(
-                    coffeeBean: $coffeeBean,
-                    roastLevel: $roastLevel,
-                    roastDate: $roastDate
-                )
+        Form {
+            // 第一步：咖啡豆信息
+            CoffeeBeanSection(
+                coffeeBean: $coffeeBean,
+                roastLevel: $roastLevel,
+                roastDate: $roastDate
+            )
 
-                // 第二步：冲煮方式
-                Section {
-                    Picker("冲煮方式", selection: $method) {
-                        ForEach(BrewMethod.allCases) { method in
-                            Label(method.displayName, systemImage: method.iconName)
-                                .tag(method)
-                        }
+            // 第二步：冲煮方式
+            Section {
+                Picker("冲煮方式", selection: $method) {
+                    ForEach(BrewMethod.allCases) { method in
+                        Label(method.displayName, systemImage: method.iconName)
+                            .tag(method)
                     }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                } header: {
-                    Text("冲煮方式")
                 }
-
-                // 冲煮参数（根据方式变化）
-                switch method {
-                case .espresso:
-                    EspressoFormSection(
-                        grindSize: $espressoGrindSize,
-                        dose: $espressoDose,
-                        yield: $espressoYield,
-                        time: $espressoTime,
-                        temp: $espressoTemp,
-                        pressure: $espressoPressure
-                    )
-                case .pourOver:
-                    PourOverFormSection(
-                        grindSize: $pourOverGrindSize,
-                        dose: $pourOverDose,
-                        water: $pourOverWater,
-                        temp: $pourOverTemp,
-                        bloomTime: $pourOverBloomTime,
-                        time: $pourOverTime,
-                        pours: $pourOverPours
-                    )
-                case .mokaPot:
-                    MokaPotFormSection(
-                        grindSize: $mokaPotGrindSize,
-                        dose: $mokaDose,
-                        water: $mokaWater,
-                        heat: $mokaHeat,
-                        time: $mokaTime
-                    )
-                }
-
-                // 第三步：后处理（可折叠）
-                PostProcessingSection(
-                    drinkType: $drinkType,
-                    milkType: $milkType,
-                    milkAmount: $milkAmount,
-                    isIced: $isIced
-                )
-
-                // 第四步：评价
-                RatingSection(rating: $rating)
-                NotesSection(notes: $notes)
-
-                // 日期（移到底部）
-                Section {
-                    DatePicker("日期", selection: $date)
-                        .datePickerStyle(.compact)
-                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            } header: {
+                Text("冲煮方式")
             }
-            .navigationTitle("新建记录")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
-                        saveRecord()
-                    }
-                    .disabled(!isValid)
-                }
+
+            // 冲煮参数（根据方式变化）
+            switch method {
+            case .espresso:
+                EspressoFormSection(
+                    grindSize: $espressoGrindSize,
+                    dose: $espressoDose,
+                    yield: $espressoYield,
+                    time: $espressoTime,
+                    temp: $espressoTemp,
+                    pressure: $espressoPressure
+                )
+            case .pourOver:
+                PourOverFormSection(
+                    grindSize: $pourOverGrindSize,
+                    dose: $pourOverDose,
+                    water: $pourOverWater,
+                    temp: $pourOverTemp,
+                    bloomTime: $pourOverBloomTime,
+                    time: $pourOverTime,
+                    pours: $pourOverPours
+                )
+            case .mokaPot:
+                MokaPotFormSection(
+                    grindSize: $mokaPotGrindSize,
+                    dose: $mokaDose,
+                    water: $mokaWater,
+                    heat: $mokaHeat,
+                    time: $mokaTime
+                )
             }
-            .scrollDismissesKeyboard(.interactively)
+
+            // 第三步：后处理（可折叠）
+            PostProcessingSection(
+                drinkType: $drinkType,
+                milkType: $milkType,
+                milkAmount: $milkAmount,
+                isIced: $isIced
+            )
+
+            // 第四步：评价
+            RatingSection(rating: $rating)
+            NotesSection(notes: $notes)
+
+            // 日期（移到底部）
+            Section {
+                DatePicker("日期", selection: $date)
+                    .datePickerStyle(.compact)
+            }
         }
+        .navigationTitle("新建记录")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("取消") {
+                    dismiss()
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("保存") {
+                    saveRecord()
+                }
+                .disabled(!isValid)
+            }
+        }
+        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - 验证
