@@ -37,6 +37,7 @@ struct RecordListView: View {
             }
             .sheet(isPresented: $showingNewRecord) {
                 NewRecordView()
+                    .modelContext(modelContext)
             }
             .overlay(alignment: .bottom) {
                 undoToast
